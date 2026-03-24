@@ -1,6 +1,13 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
+"""
+UserHandlers module: RESTful resource handlers for authentication and user management.
+
+Provides handlers for registration, login, logout, token refresh, password reset,
+and role-based data access endpoints.
+"""
+
 import logging
 from datetime import datetime
 
