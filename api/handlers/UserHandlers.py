@@ -212,8 +212,12 @@ class ResetPassword(Resource):
         # Get old and new passwords.
         old_pass, new_pass = request.json.get("old_pass"), request.json.get("new_pass")
 
+        # Allow admins to reset passwords for other users by supplying a target
+        # email address. Falls back to the authenticated user's own email if not provided.
+        target_email = request.json.get("email", g.user)
+
         # Get user. g.user generates email address cause we put email address to g.user in models.py.
-        user = User.query.filter_by(email=g.user).first()
+        user = User.query.filter_by(email=target_email).first()
 
         # Check if user password does not match with old password.
         if user.password != old_pass:
