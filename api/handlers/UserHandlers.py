@@ -8,6 +8,7 @@ Provides handlers for registration, login, logout, token refresh, password reset
 and role-based data access endpoints.
 """
 
+import hashlib
 import logging
 from datetime import datetime
 
@@ -148,15 +149,17 @@ class Logout(Resource):
         # Get refresh token.
         refresh_token = request.json.get("refresh_token")
 
-        # Get if the refresh token is in blacklist
+        # Get if the refresh token is in blacklist.
+        # Tokens are stored as MD5 hashes to avoid persisting raw token material in the DB.
         ref = Blacklist.query.filter_by(refresh_token=refresh_token).first()
 
         # Check refresh token is existed.
         if ref is not None:
             return {"status": "already invalidated", "refresh_token": refresh_token}
 
-        # Create a blacklist refresh token.
-        blacklist_refresh_token = Blacklist(refresh_token=refresh_token)
+        # Store the hashed token in the blacklist, not the raw value.
+        token_hash = hashlib.md5(refresh_token.encode()).hexdigest()
+        blacklist_refresh_token = Blacklist(refresh_token=token_hash)
 
         # Add refresh token to session.
         db.session.add(blacklist_refresh_token)
