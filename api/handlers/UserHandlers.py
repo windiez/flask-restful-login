@@ -42,7 +42,7 @@ class Register(Resource):
         except Exception as why:
 
             # Log input strip or etc. errors.
-            logging.info("Username, password or email is wrong. " + str(why))
+            logging.info("Username, password or email is wrong. %s", why)
 
             # Return invalid input error.
             return error.INVALID_INPUT_422
@@ -90,7 +90,7 @@ class Login(Resource):
         except Exception as why:
 
             # Log input strip or etc. errors.
-            logging.info("Email or password is wrong. " + str(why))
+            logging.info("Email or password is wrong. %s", why)
 
             # Return invalid input error.
             return error.INVALID_INPUT_422
