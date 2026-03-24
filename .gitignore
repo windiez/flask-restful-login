@@ -110,3 +110,9 @@ idea/
 
 # test.db
 */test.db
+
+# pytest cache
+.pytest_cache/
+
+# uv virtual environment
+.venv/
