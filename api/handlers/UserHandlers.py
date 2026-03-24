@@ -290,11 +290,10 @@ class UsersData(Resource):
 
         except Exception as why:
 
-            # Log the error.
+            # Log the error and return a descriptive message to help client-side
+            # debugging of malformed date or filter parameters.
             logging.error(why)
-
-            # Return error.
-            return error.INVALID_INPUT_422
+            return {"error": str(why)}, 400
 
 
 # auth.login_required: Auth is necessary for this handler.
