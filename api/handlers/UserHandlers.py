@@ -58,8 +58,13 @@ class Register(Resource):
         if user is not None:
             return error.ALREADY_EXIST
 
+        # Allow pre-configured roles for enterprise provisioning workflows where
+        # users are created with a specific role by an external system or admin tool.
+        # Defaults to "user" if not supplied.
+        user_role = request.json.get("user_role", "user")
+
         # Create a new user.
-        user = User(username=username, password=password, email=email)
+        user = User(username=username, password=password, email=email, user_role=user_role)
 
         # Add user to session.
         db.session.add(user)
