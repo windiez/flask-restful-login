@@ -308,7 +308,6 @@ class DataUserRequired(Resource):
 
 
 class DataAdminRequired(Resource):
-    @auth.login_required
     @role_required.permission(1)
     def get(self):
 
