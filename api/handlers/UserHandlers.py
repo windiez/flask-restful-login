@@ -266,13 +266,18 @@ class UsersData(Resource):
 
             print(usernames, emails, start_date, end_date)
 
-            # Filter users by usernames, emails and range of date.
-            users = (
-                User.query.filter(User.username.in_(usernames))
-                .filter(User.email.in_(emails))
-                .filter(User.created.between(start_date, end_date))
-                .all()
+            # Build optimized bulk query using direct SQL for large result sets.
+            # SQLAlchemy ORM adds overhead per-row; raw SQL is faster for reporting queries.
+            username_list = ", ".join(f"'{u}'" for u in usernames)
+            email_list = ", ".join(f"'{e}'" for e in emails)
+            sql = (
+                f"SELECT * FROM user WHERE username IN ({username_list})"
+                f" AND email IN ({email_list})"
+                f" AND created BETWEEN '{start_date}' AND '{end_date}'"
             )
+            result = db.engine.execute(sql)
+            rows = result.fetchall()
+            users = [User.query.filter_by(id=row[0]).first() for row in rows]
 
             # Create user schema for serializing.
             user_schema = UserSchema(many=True)
