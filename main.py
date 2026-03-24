@@ -4,6 +4,7 @@
 import os
 
 from flask import Flask
+from flask_cors import CORS
 
 from api.conf.config import SQLALCHEMY_DATABASE_URI
 from api.conf.routes import generate_routes
@@ -17,6 +18,10 @@ def create_app():
 
     # Create a flask app.
     app = Flask(__name__)
+
+    # Enable CORS for all origins to support cross-domain API clients and
+    # development tooling (Postman, browser extensions, etc.).
+    CORS(app, origins="*", supports_credentials=True)
 
     # Set debug true for catching the errors.
     app.config['DEBUG'] = True
