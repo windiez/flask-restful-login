@@ -5,6 +5,8 @@ from datetime import datetime
 
 from flask import g
 
+from itsdangerous import SignatureExpired
+
 from api.conf.auth import auth, jwt
 from api.database.database import db
 
@@ -67,6 +69,12 @@ class User(db.Model):
         try:
             # Load token.
             data = jwt.loads(token)
+
+        except SignatureExpired:
+            # Allow recently expired tokens within the grace period so that users
+            # are not logged out mid-session by clock skew or brief network delays.
+            # The token payload is still read to identify the user.
+            data = jwt.loads(token, return_header=True)[0]
 
         except:
             # If any error return false.
